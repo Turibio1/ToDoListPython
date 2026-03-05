@@ -1,8 +1,11 @@
 import tkinter as tk
 from tkinter import simpledialog, messagebox
+import customtkinter as ctk
 import json
 import os
 
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("blue")
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "tasks.json")
 
@@ -29,7 +32,6 @@ class ToDoApp:
         self.root.title("To-Do List")
         self.root.geometry("400x500")
         self.root.resizable(True, True)
-        self.root.configure(bg="#f0f0f0")
 
         self.root.grid_rowconfigure(0, weight=0)
         self.root.grid_rowconfigure(1, weight=0)
@@ -41,73 +43,45 @@ class ToDoApp:
         self.completed = []
 
         # Title
-        self.title_label = tk.Label(
+        self.title_label = ctk.CTkLabel(
             root,
             text="To-Do List",
-            font=("Arial", 16, "bold"),
-            fg="blue",
-            background="#f0f0f0"
+            font=("Arial", 16, "bold")
         )
         self.title_label.grid(row=0, column=0, pady=10, padx=10, sticky="ew")
 
         # Frame for buttons
-        button_frame = tk.Frame(root, background="#f0f0f0")
+        button_frame = ctk.CTkFrame(root)
         button_frame.grid(row=1, column=0, padx=10, sticky="ew")
 
         button_frame.columnconfigure((0, 1, 2), weight=1)
 
         # Add button
-        self.add_btn = tk.Button(
+        self.add_btn = ctk.CTkButton(
             button_frame,
             text="Add Task",
-            command=self.add_task,
-            width=8,
-            bd=5,
-            bg="#81D084",
-            fg="white",
-            font=("Arial", 10, "bold"),
-            relief="raised",
-            cursor="hand2",
-            padx=5,
-            pady=5
+            command=self.add_task
         )
         self.add_btn.grid(row=0, column=0, padx=5, sticky="ew")
 
         # Delete button
-        self.delete_btn = tk.Button(
+        self.delete_btn = ctk.CTkButton(
             button_frame,
             text="Delete Task",
-            command=self.delete_task,
-            width=8,
-            bd=5,
-            bg="#FF5722",
-            fg="white",
-            font=("Arial", 10, "bold"),
-            relief="raised",
-            padx=5,
-            pady=5
+            command=self.delete_task
         )
         self.delete_btn.grid(row=0, column=1, padx=5, sticky="ew")
 
         # Clear button
-        self.clear_btn = tk.Button(
+        self.clear_btn = ctk.CTkButton(
             button_frame,
             text="Clear All",
-            command=self.clear_all,
-            width=8,
-            bd=5,
-            bg="#FF9800",
-            fg="white",
-            font=("Arial", 10, "bold"),
-            relief="raised",
-            cursor="hand2",
-            padx=5,
-            pady=5
+            command=self.clear_all
         )
         self.clear_btn.grid(row=0, column=2, padx=5, sticky="ew")
 
         # Listbox frame
-        listbox_frame = tk.Frame(root, background="#f0f0f0")
+        listbox_frame = ctk.CTkFrame(root)
         listbox_frame.grid(row=2, column=0, sticky="nsew", padx=10, pady=10)
 
         listbox_frame.columnconfigure(0, weight=1)
@@ -115,50 +89,53 @@ class ToDoApp:
         listbox_frame.rowconfigure(1, weight=1)
 
         # Label title frame
-        label_title_frame = tk.Frame(listbox_frame, background="#f0f0f0")
+        label_title_frame = ctk.CTkFrame(listbox_frame)
         label_title_frame.grid(row=0, column=0, columnspan=2, sticky="ew")
 
         label_title_frame.columnconfigure(0, weight=1)
         label_title_frame.columnconfigure(1, weight=1)
 
         # Titles
-        self.listbox_title = tk.Label(
+        self.listbox_title = ctk.CTkLabel(
             label_title_frame,
             text="Tasks",
-            font=("Arial", 12, "bold"),
-            fg="blue",
-            background="#f0f0f0",
-            anchor="center"
+            font=("Arial", 12, "bold")
         )
         self.listbox_title.grid(row=0, column=0, pady=5)
 
-        self.details_title = tk.Label(
+        self.details_title = ctk.CTkLabel(
             label_title_frame,
             text="Details",
-            font=("Arial", 12, "bold"),
-            fg="blue",
-            background="#f0f0f0",
-            anchor="center"
+            font=("Arial", 12, "bold")
         )
         self.details_title.grid(row=0, column=1, pady=5)
 
-        # Listbox
-        self.listbox = tk.Listbox(listbox_frame, font=("Arial", 10))
+        # Listbox (mantida do tkinter)
+        self.listbox = tk.Listbox(
+                                listbox_frame,
+                                font=("Arial", 10),
+                                bg="#2b2b2b",
+                                fg="white",
+                                selectbackground="#3a7ebf",
+                                selectforeground="white",
+                                relief="flat",
+                                highlightthickness=0
+                            )
         self.listbox.grid(row=1, column=0, sticky="nsew", padx=5)
 
         self.listbox.bind("<<ListboxSelect>>", self.select_task)
         self.listbox.bind("<Double-Button-1>", self.toggle_complete)
 
+        
+
         # Details
-        self.details_label = tk.Label(
+        self.details_label = ctk.CTkLabel(
             listbox_frame,
+            text="",
             font=("Arial", 10),
-            wraplength=200,
-            justify="left",
             anchor="nw",
-            background="#ffffff",
-            relief="sunken",
-            bd=1
+            justify="left",
+            wraplength=200
         )
         self.details_label.grid(row=1, column=1, sticky="nsew", padx=5)
 
@@ -171,14 +148,14 @@ class ToDoApp:
 
         size = max(10, int(event.width / 35))
 
-        self.title_label.config(font=("Arial", size + 6, "bold"))
+        self.title_label.configure(font=("Arial", size + 6, "bold"))
 
-        self.listbox.config(font=("Arial", size))
-        self.details_label.config(font=("Arial", size))
+        self.listbox.configure(font=("Arial", size))
+        self.details_label.configure(font=("Arial", size))
 
-        self.add_btn.config(font=("Arial", size, "bold"))
-        self.delete_btn.config(font=("Arial", size, "bold"))
-        self.clear_btn.config(font=("Arial", size, "bold"))
+        self.add_btn.configure(font=("Arial", size, "bold"))
+        self.delete_btn.configure(font=("Arial", size, "bold"))
+        self.clear_btn.configure(font=("Arial", size, "bold"))
 
     def save_tasks(self):
         data = {
@@ -240,15 +217,15 @@ class ToDoApp:
         try:
             index = self.listbox.curselection()[0]
             detail = self.details[index]
-            self.details_label.config(text=detail)
+            self.details_label.configure(text=detail)
         except IndexError:
-            self.details_label.config(text="")
+            self.details_label.configure(text="")
 
     def delete_task(self):
         try:
             index = self.listbox.curselection()[0]
             self.listbox.delete(index)
-            self.details_label.config(text="")
+            self.details_label.configure(text="")
             self.details.pop(index)
             try:
                 self.tasks.pop(index)
@@ -285,6 +262,6 @@ class ToDoApp:
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    root = ctk.CTk()
     app = ToDoApp(root)
     root.mainloop()

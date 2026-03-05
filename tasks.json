@@ -1,5 +1,14 @@
 {
-  "tasks": [],
-  "details": [],
-  "completed": []
+  "tasks": [
+    "Test",
+    "Test 2"
+  ],
+  "details": [
+    "This is a test",
+    "This is also a test"
+  ],
+  "completed": [
+    false,
+    true
+  ]
 }
