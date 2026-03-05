@@ -7,7 +7,6 @@ import os
 DATA_FILE = os.path.join(os.path.dirname(__file__), "tasks.json")
 
 
-
 class MultilineDialog(simpledialog.Dialog):
     def __init__(self, parent, title=None, initial_text=""):
         self.initial_text = initial_text
@@ -23,6 +22,7 @@ class MultilineDialog(simpledialog.Dialog):
     def apply(self):
         self.result = self.text.get('1.0', 'end-1c')
 
+
 class ToDoApp:
     def __init__(self, root):
         self.root = root
@@ -30,95 +30,155 @@ class ToDoApp:
         self.root.geometry("400x500")
         self.root.resizable(True, True)
         self.root.configure(bg="#f0f0f0")
-        
+
+        self.root.grid_rowconfigure(0, weight=0)
+        self.root.grid_rowconfigure(1, weight=0)
+        self.root.grid_rowconfigure(2, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
+
         self.tasks = []
         self.details = []
         self.completed = []
-        
+
         # Title
-        self.title_label = tk.Label(root, text="To-Do List", font=("Arial", 16, "bold"), fg="blue", 
-                                    background="#f0f0f0")
-        self.title_label.pack(pady=10, padx=50, fill="x", anchor="n")
-         
+        self.title_label = tk.Label(
+            root,
+            text="To-Do List",
+            font=("Arial", 16, "bold"),
+            fg="blue",
+            background="#f0f0f0"
+        )
+        self.title_label.grid(row=0, column=0, pady=10, padx=10, sticky="ew")
+
         # Frame for buttons
-        button_frame = tk.Frame(root,background="#f0f0f0")
-        button_frame.pack( padx=50, expand=True, fill="x", anchor="n")
-      
+        button_frame = tk.Frame(root, background="#f0f0f0")
+        button_frame.grid(row=1, column=0, padx=10, sticky="ew")
+
+        button_frame.columnconfigure((0, 1, 2), weight=1)
+
         # Add button
         self.add_btn = tk.Button(
-                                button_frame, 
-                                text="Add Task", 
-                                command=self.add_task, 
-                                width=8,
-                                bd=5,                 
-                                bg="#81D084",         
-                                fg="white",          
-                                font=("Arial", 10, "bold"),  
-                                relief="raised",       
-                                cursor="hand2",        
-                                padx=5,                
-                                pady=5                 
+            button_frame,
+            text="Add Task",
+            command=self.add_task,
+            width=8,
+            bd=5,
+            bg="#81D084",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            relief="raised",
+            cursor="hand2",
+            padx=5,
+            pady=5
         )
-        self.add_btn.grid(row=0, column=0, padx=5)
-        
+        self.add_btn.grid(row=0, column=0, padx=5, sticky="ew")
+
         # Delete button
-        self.delete_btn = tk.Button(button_frame, 
-                                    text="Delete Task", 
-                                    command=self.delete_task, 
-                                    width=8,
-                                    bd=5,                  
-                                    bg="#FF5722",           
-                                    fg="white",             
-                                    font=("Arial", 10, "bold"),  
-                                    relief="raised",        
-                                    padx=5,                
-                                    pady=5                  
+        self.delete_btn = tk.Button(
+            button_frame,
+            text="Delete Task",
+            command=self.delete_task,
+            width=8,
+            bd=5,
+            bg="#FF5722",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            relief="raised",
+            padx=5,
+            pady=5
         )
-        self.delete_btn.grid(row=0, column=1, padx=5)
-        
+        self.delete_btn.grid(row=0, column=1, padx=5, sticky="ew")
+
         # Clear button
-        self.clear_btn = tk.Button(button_frame,
-                                   text="Clear All", command=self.clear_all, 
-                                   width=8,
-                                   bd=5,                  
-                                   bg="#FF9800",           
-                                   fg="white",             
-                                   font=("Arial", 10, "bold"),  
-                                   relief="raised",        
-                                   cursor="hand2",         
-                                   padx=5,                
-                                   pady=5                  
+        self.clear_btn = tk.Button(
+            button_frame,
+            text="Clear All",
+            command=self.clear_all,
+            width=8,
+            bd=5,
+            bg="#FF9800",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            relief="raised",
+            cursor="hand2",
+            padx=5,
+            pady=5
         )
-        self.clear_btn.grid(row=0, column=2, padx=5)
+        self.clear_btn.grid(row=0, column=2, padx=5, sticky="ew")
 
         # Listbox frame
         listbox_frame = tk.Frame(root, background="#f0f0f0")
-        listbox_frame.pack(pady=10)
+        listbox_frame.grid(row=2, column=0, sticky="nsew", padx=10, pady=10)
 
-        #label title frame
-        lable_title_frame = tk.Frame(listbox_frame, background="#f0f0f0")
-        lable_title_frame.pack(padx=15, fill="x")
+        listbox_frame.columnconfigure(0, weight=1)
+        listbox_frame.columnconfigure(1, weight=1)
+        listbox_frame.rowconfigure(1, weight=1)
 
-        #label title
-        self.listbox_title = tk.Label(lable_title_frame, text="Tasks", font=("Arial", 12, "bold"), 
-                                      fg="blue", background="#f0f0f0", anchor="s")    
-        self.listbox_title.pack(pady=5, padx=38, side="left")
-        self.details_title = tk.Label(lable_title_frame, text="Details", font=("Arial", 12, "bold"), 
-                                      fg="blue", background="#f0f0f0", anchor="s")
-        self.details_title.pack(pady=5, padx=80,side="right")
+        # Label title frame
+        label_title_frame = tk.Frame(listbox_frame, background="#f0f0f0")
+        label_title_frame.grid(row=0, column=0, columnspan=2, sticky="ew")
+
+        label_title_frame.columnconfigure(0, weight=1)
+        label_title_frame.columnconfigure(1, weight=1)
+
+        # Titles
+        self.listbox_title = tk.Label(
+            label_title_frame,
+            text="Tasks",
+            font=("Arial", 12, "bold"),
+            fg="blue",
+            background="#f0f0f0",
+            anchor="center"
+        )
+        self.listbox_title.grid(row=0, column=0, pady=5)
+
+        self.details_title = tk.Label(
+            label_title_frame,
+            text="Details",
+            font=("Arial", 12, "bold"),
+            fg="blue",
+            background="#f0f0f0",
+            anchor="center"
+        )
+        self.details_title.grid(row=0, column=1, pady=5)
 
         # Listbox
-        self.listbox = tk.Listbox(listbox_frame, height=30, width=20, font=("Arial", 10))
-        self.listbox.pack(padx=10, side="left", fill="both")
+        self.listbox = tk.Listbox(listbox_frame, font=("Arial", 10))
+        self.listbox.grid(row=1, column=0, sticky="nsew", padx=5)
+
         self.listbox.bind("<<ListboxSelect>>", self.select_task)
         self.listbox.bind("<Double-Button-1>", self.toggle_complete)
 
-        # Details Label
-        self.details_label = tk.Label(listbox_frame, height=30, width=30, font=("Arial", 10), 
-                                      wraplength=200, justify="left", anchor="nw", background="#ffffff", relief="sunken", bd=1)
-        self.details_label.pack(padx=10, side="right", fill="both", expand=True)       
-        # load persisted tasks (if any)
+        # Details
+        self.details_label = tk.Label(
+            listbox_frame,
+            font=("Arial", 10),
+            wraplength=200,
+            justify="left",
+            anchor="nw",
+            background="#ffffff",
+            relief="sunken",
+            bd=1
+        )
+        self.details_label.grid(row=1, column=1, sticky="nsew", padx=5)
+
         self.load_tasks()
+
+        # Bind resize
+        self.root.bind("<Configure>", self.resize_fonts)
+
+    def resize_fonts(self, event):
+
+        size = max(10, int(event.width / 35))
+
+        self.title_label.config(font=("Arial", size + 6, "bold"))
+
+        self.listbox.config(font=("Arial", size))
+        self.details_label.config(font=("Arial", size))
+
+        self.add_btn.config(font=("Arial", size, "bold"))
+        self.delete_btn.config(font=("Arial", size, "bold"))
+        self.clear_btn.config(font=("Arial", size, "bold"))
 
     def save_tasks(self):
         data = {
@@ -148,10 +208,9 @@ class ToDoApp:
         details = data.get("details", [])
         completed = data.get("completed", [])
 
-        # clear any current items
         self.listbox.delete(0, tk.END)
         self.tasks = []
-        self.details = []       
+        self.details = []
         self.completed = []
 
         for i, t in enumerate(tasks):
@@ -162,7 +221,7 @@ class ToDoApp:
             self.completed.append(bool(c))
             prefix = "☑" if c else "☐"
             self.listbox.insert(tk.END, f"{prefix} {t}")
-    
+
     def add_task(self):
         task = simpledialog.askstring("Add Task", "Enter a new task:")
         if task:
@@ -176,21 +235,21 @@ class ToDoApp:
             else:
                 self.details.append("No details provided.")
             self.save_tasks()
+
     def select_task(self, event):
         try:
             index = self.listbox.curselection()[0]
             detail = self.details[index]
             self.details_label.config(text=detail)
         except IndexError:
-            self.details_label.config(text="")  
-    
+            self.details_label.config(text="")
+
     def delete_task(self):
         try:
             index = self.listbox.curselection()[0]
             self.listbox.delete(index)
             self.details_label.config(text="")
             self.details.pop(index)
-            # keep internal lists synced
             try:
                 self.tasks.pop(index)
             except Exception:
@@ -202,7 +261,7 @@ class ToDoApp:
             self.save_tasks()
         except IndexError:
             messagebox.showwarning("Warning", "Please select a task to delete.")
-    
+
     def clear_all(self):
         if messagebox.askyesno("Confirm", "Clear all tasks?"):
             self.listbox.delete(0, tk.END)
@@ -223,6 +282,7 @@ class ToDoApp:
             self.save_tasks()
         except IndexError:
             return
+
 
 if __name__ == "__main__":
     root = tk.Tk()
