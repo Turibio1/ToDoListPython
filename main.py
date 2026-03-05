@@ -3,11 +3,17 @@ from tkinter import simpledialog, messagebox
 import customtkinter as ctk
 import json
 import os
+import sys
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
 
-DATA_FILE = os.path.join(os.path.dirname(__file__), "tasks.json")
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(__file__)
+
+DATA_FILE = os.path.join(BASE_DIR, "tasks.json")
 
 
 class MultilineDialog(simpledialog.Dialog):
@@ -110,23 +116,30 @@ class ToDoApp:
         )
         self.details_title.grid(row=0, column=1, pady=5)
 
-        # Listbox (mantida do tkinter)
+        # Listbox (cor igual ao fundo padrão escuro do CustomTkinter)
         self.listbox = tk.Listbox(
-                                listbox_frame,
-                                font=("Arial", 10),
-                                bg="#2b2b2b",
-                                fg="white",
-                                selectbackground="#3a7ebf",
-                                selectforeground="white",
-                                relief="flat",
-                                highlightthickness=0
-                            )
+            listbox_frame,
+            font=("Arial", 10),
+            bg="#2b2b2b",
+            fg="white",
+            selectbackground="#3a7ebf",
+            selectforeground="white",
+            relief="flat",
+            highlightthickness=0
+        )
         self.listbox.grid(row=1, column=0, sticky="nsew", padx=5)
 
         self.listbox.bind("<<ListboxSelect>>", self.select_task)
         self.listbox.bind("<Double-Button-1>", self.toggle_complete)
 
-        
+        # scrollbar (CORRIGIDO)
+        self.scrollbar = ctk.CTkScrollbar(
+                                        listbox_frame,
+                                        command=self.listbox.yview
+                                    )
+
+        self.scrollbar.grid(row=1, column=0, sticky="nse")
+        self.listbox.configure(yscrollcommand=self.scrollbar.set)
 
         # Details
         self.details_label = ctk.CTkLabel(
@@ -145,14 +158,10 @@ class ToDoApp:
         self.root.bind("<Configure>", self.resize_fonts)
 
     def resize_fonts(self, event):
-
         size = max(10, int(event.width / 35))
-
         self.title_label.configure(font=("Arial", size + 6, "bold"))
-
         self.listbox.configure(font=("Arial", size))
         self.details_label.configure(font=("Arial", size))
-
         self.add_btn.configure(font=("Arial", size, "bold"))
         self.delete_btn.configure(font=("Arial", size, "bold"))
         self.clear_btn.configure(font=("Arial", size, "bold"))
@@ -265,3 +274,6 @@ if __name__ == "__main__":
     root = ctk.CTk()
     app = ToDoApp(root)
     root.mainloop()
+
+# Para gerar o .exe com ícone:
+# pyinstaller --onefile --windowed --icon=icon.ico main.py
