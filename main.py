@@ -116,7 +116,7 @@ class ToDoApp:
         )
         self.details_title.grid(row=0, column=1, pady=5)
 
-        # Listbox (cor igual ao fundo padrão escuro do CustomTkinter)
+        # Listbox 
         self.listbox = tk.Listbox(
             listbox_frame,
             font=("Arial", 10),
@@ -132,7 +132,7 @@ class ToDoApp:
         self.listbox.bind("<<ListboxSelect>>", self.select_task)
         self.listbox.bind("<Double-Button-1>", self.toggle_complete)
 
-        # scrollbar (CORRIGIDO)
+        # scrollbar
         self.scrollbar = ctk.CTkScrollbar(
                                         listbox_frame,
                                         command=self.listbox.yview
